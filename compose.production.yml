@@ -1,0 +1,27 @@
+services:
+  geo-service:
+    build: .
+    restart: unless-stopped
+    environment:
+      GEO_ADMIN_KEY: ${GEO_ADMIN_KEY}
+      GEO_ROOT_PATH: /geo-api
+      GEO_CROSSWALK: /app/data/dhis2_crosswalk.json
+    volumes:
+      - geo_crosswalk:/app/data
+    expose:
+      - "8000"
+    networks:
+      - onehealth
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+
+volumes:
+  geo_crosswalk:
+
+networks:
+  onehealth:
+    external: true
+    name: onehealth-platform_default

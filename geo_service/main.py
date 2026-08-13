@@ -22,6 +22,7 @@ app = FastAPI(
     title="Bangladesh Geo Service",
     version="1.0.0",
     description="Administrative hierarchy, point lookup, and DHIS2 organisation-unit crosswalk API.",
+    root_path=os.getenv("GEO_ROOT_PATH", ""),
 )
 
 

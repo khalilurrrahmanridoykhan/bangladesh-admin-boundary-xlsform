@@ -156,6 +156,20 @@ The default writable crosswalk is `data/dhis2_crosswalk.json` and is ignored
 by Git. Set `GEO_CROSSWALK` to use a mounted persistent path in production.
 An example record is provided in `data/dhis2_crosswalk.example.json`.
 
+### Production container
+
+`Dockerfile` and `compose.production.yml` run the API as an unprivileged,
+read-only container. Configure `GEO_ADMIN_KEY` in a local `.env.production`
+file, then start it with:
+
+```bash
+docker compose --env-file .env.production -f compose.production.yml up -d --build
+```
+
+The Compose service joins the existing `onehealth-platform_default` proxy
+network and expects a reverse proxy to strip `/geo-api` before forwarding to
+`geo-service:8000`. Change `GEO_ROOT_PATH` if deploying at another prefix.
+
 ## Validation
 
 Both map-enabled forms compile cleanly with `pyxform` (`xls2xform_convert(...,

@@ -11,3 +11,4 @@ compiled_output*.xml
 .venv/
 .pytest_cache/
 data/dhis2_crosswalk.json
+.env.production
