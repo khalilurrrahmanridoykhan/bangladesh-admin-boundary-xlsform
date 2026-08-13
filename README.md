@@ -113,6 +113,49 @@ list — see `scripts/build_choices_from_shapefiles.py`.
   area's location but can't be independently repositioned by the enumerator
   — a deliberate tradeoff for reliable live-updating (see above).
 
+## Bangladesh Geo Service and DHIS2 crosswalk API
+
+The repository also includes a small FastAPI service that turns the same
+committed XLSForm geography into a shared lookup API. It supports cascading
+geographic lookups, reverse point-in-Union lookup, hierarchy lineage, and a
+persistent geographic-code ↔ DHIS2 organisation-unit crosswalk.
+
+The workbook contains 5,588 geographic choices: 8 divisions, 64 districts,
+590 upazilas, and 4,926 unions/municipalities.
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+uvicorn geo_service.main:app --reload
+```
+
+Interactive API documentation is then available at `http://127.0.0.1:8000/docs`.
+
+Read endpoints:
+
+- `GET /divisions`
+- `GET /districts?division_code=div_30`
+- `GET /upazilas?district_code=dis_3029`
+- `GET /unions?upazila_code=upa_302947`
+- `GET /areas/{area_id}` and `/areas/{area_id}/lineage`
+- `POST /locate` with `{"latitude": 23.7, "longitude": 90.4}`
+- `GET /dhis2/crosswalk/{area_id}`
+
+Crosswalk writes and DHIS2 synchronization are disabled unless
+`GEO_ADMIN_KEY` is set. Send that value in the `X-Admin-Key` header when
+calling `PUT /dhis2/crosswalk/{area_id}` or `POST /dhis2/sync`. The sync
+endpoint reads DHIS2 organisation units and matches their configured `code`
+field to this project's stable, level-qualified area IDs (for example
+`div_30` or `uni_100409109`). The raw official code remains available as
+`geo_code` in every API response. Never commit a
+DHIS2 token or password; provide credentials only in the request to a service
+you control, over HTTPS.
+
+The default writable crosswalk is `data/dhis2_crosswalk.json` and is ignored
+by Git. Set `GEO_CROSSWALK` to use a mounted persistent path in production.
+An example record is provided in `data/dhis2_crosswalk.example.json`.
+
 ## Validation
 
 Both map-enabled forms compile cleanly with `pyxform` (`xls2xform_convert(...,

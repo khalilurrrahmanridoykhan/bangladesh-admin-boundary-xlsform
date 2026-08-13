@@ -8,3 +8,6 @@ __pycache__/
 *.cpg
 compiled_output*.xml
 *.pkl
+.venv/
+.pytest_cache/
+data/dhis2_crosswalk.json
