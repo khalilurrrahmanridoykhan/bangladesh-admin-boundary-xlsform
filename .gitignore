@@ -1,0 +1,10 @@
+.DS_Store
+*.pyc
+__pycache__/
+*.shp
+*.shx
+*.dbf
+*.prj
+*.cpg
+compiled_output*.xml
+*.pkl
